@@ -40,3 +40,20 @@
 .read-the-docs {
   color: #888;
 }
+
+.banner {
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+.banner.success {
+  background: #e6ffed;
+  color: #0f5132;
+  border: 1px solid #b7ebc6;
+}
+.banner.error {
+  background: #ffe6e6;
+  color: #842029;
+  border: 1px solid #f5c2c7;
+}

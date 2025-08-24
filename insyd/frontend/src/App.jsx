@@ -9,6 +9,7 @@ function App() {
   const [type, setType] = useState('like')
   const [targetUserId, setTargetUserId] = useState('userB')
   const [sourceUserId, setSourceUserId] = useState('userA')
+  const [banner, setBanner] = useState(null)
 
   const api = useMemo(() => ({
     async fetchNotifications(u) {
@@ -53,12 +54,22 @@ function App() {
 
   const submitEvent = async (e) => {
     e.preventDefault()
-    await api.enqueueEvent({ type, sourceUserId, targetUserId })
+    try {
+      await api.enqueueEvent({ type, sourceUserId, targetUserId })
+      setBanner({ kind: 'success', text: `Event '${type}' sent from ${sourceUserId} to ${targetUserId}` })
+      setTimeout(() => setBanner(null), 2000)
+    } catch (err) {
+      setBanner({ kind: 'error', text: 'Failed to send event' })
+      setTimeout(() => setBanner(null), 3000)
+    }
   }
 
   return (
     <div className="App">
       <h1>Insyd Notifications POC</h1>
+      {banner && (
+        <div className={`banner ${banner.kind}`} role="status">{banner.text}</div>
+      )}
       <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
         <div>
           <h2>Trigger Event</h2>
@@ -93,7 +104,16 @@ function App() {
                 <option value="userB">userB</option>
               </select>
             </label>
-            <button style={{ marginLeft: 8 }} onClick={() => api.markAllRead(userId)}>Mark all read</button>
+            <button style={{ marginLeft: 8 }} onClick={async () => {
+              try {
+                await api.markAllRead(userId)
+                setBanner({ kind: 'success', text: `Marked all read for ${userId}` })
+                setTimeout(() => setBanner(null), 2000)
+              } catch (err) {
+                setBanner({ kind: 'error', text: 'Failed to mark as read' })
+                setTimeout(() => setBanner(null), 3000)
+              }
+            }}>Mark all read</button>
           </div>
           <ul>
             {notifications.map(n => (
